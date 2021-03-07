@@ -1,0 +1,16 @@
+
+username = ""
+users = []
+server_address = None
+
+def generate_username():
+    pass
+def connect():
+    pass
+def send_message():
+    pass
+def exit():
+    pass
+
+if __name__ == "__main__":
+    pass
