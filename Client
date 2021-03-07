@@ -1,16 +1,20 @@
-
+import random
 username = ""
 users = []
 server_address = None
 
 def generate_username():
-    pass
+    un = input("Please enter your name, or some username. Do not include numbers, as these will be randomly assigned for uniqueness")
+    un += "#"
+    for _ in range(4):
+        un += str(random.randint(0,9))
+    return un
 def connect():
     pass
-def send_message():
+def send_message(user, message):
     pass
 def exit():
     pass
 
 if __name__ == "__main__":
-    pass
+    username = generate_username()
