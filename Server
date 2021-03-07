@@ -8,8 +8,10 @@ def send_connection_ack(user_address):
 def route_message(origin_user,target_user,message):
     pass
 def send_user_list(target_user,user_list):
+    #send to new user
     pass
 def send_new_user_report(new_user, user_list):
+    #send to all users, EXCEPT new user
     pass
 def remove_user(user_address):
     pass
