@@ -1,13 +1,17 @@
 import random
+from socket import *
 username = ""
 users = []
-server_address = None
-
+c_sock = socket(AF_INET, SOCK_STREAM)
+s_name = "servername"
+s_port = 12000
+c_sock.connect((s_name, s_port))
 def generate_username(un = ""):
     #new username
     if not un:
         un = input("Please enter your name, or some username. Do not include numbers, as these will be randomly assigned for uniqueness\n")
         un += "#"
+
     #username already input, but matches another username (when sent to server, there
     #is a matching user (very unlikely), so must recreate number substring)
     else:
@@ -15,9 +19,6 @@ def generate_username(un = ""):
     for _ in range(4):
         un += str(random.randint(0,9))
     return un
-def connect():
-    #connect, then send username to server. If username not unique, recreate username
-    pass
 def send_message(user, message):
     pass
 def exit():
