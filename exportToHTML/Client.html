@@ -1,0 +1,48 @@
+<html>
+<head>
+<title>Client</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #6a8759;}
+.s3 { color: #808080;}
+.s4 { color: #6897bb;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+Client</font>
+</center></td></tr></table>
+<pre><span class="s0">import </span><span class="s1">random</span>
+<span class="s1">username = </span><span class="s2">&quot;&quot;</span>
+<span class="s1">users = []</span>
+<span class="s1">server_address = </span><span class="s0">None</span>
+
+<span class="s0">def </span><span class="s1">generate_username(un = </span><span class="s2">&quot;&quot;</span><span class="s1">):</span>
+    <span class="s3">#new username</span>
+    <span class="s0">if not </span><span class="s1">un:</span>
+        <span class="s1">un = input(</span><span class="s2">&quot;Please enter your name, or some username. Do not include numbers, as these will be randomly assigned for uniqueness</span><span class="s0">\n</span><span class="s2">&quot;</span><span class="s1">)</span>
+        <span class="s1">un += </span><span class="s2">&quot;#&quot;</span>
+    <span class="s3">#username already input, but matches another username (when sent to server, there</span>
+    <span class="s3">#is a matching user (very unlikely), so must recreate number substring)</span>
+    <span class="s0">else</span><span class="s1">:</span>
+        <span class="s1">un = un[:-</span><span class="s4">4</span><span class="s1">]</span>
+    <span class="s0">for </span><span class="s1">_ </span><span class="s0">in </span><span class="s1">range(</span><span class="s4">4</span><span class="s1">):</span>
+        <span class="s1">un += str(random.randint(</span><span class="s4">0</span><span class="s0">,</span><span class="s4">9</span><span class="s1">))</span>
+    <span class="s0">return </span><span class="s1">un</span>
+<span class="s0">def </span><span class="s1">connect():</span>
+    <span class="s3">#connect, then send username to server. If username not unique, recreate username</span>
+    <span class="s0">pass</span>
+<span class="s0">def </span><span class="s1">send_message(user</span><span class="s0">, </span><span class="s1">message):</span>
+    <span class="s0">pass</span>
+<span class="s0">def </span><span class="s1">exit():</span>
+    <span class="s0">pass</span>
+
+<span class="s0">if </span><span class="s1">__name__ == </span><span class="s2">&quot;__main__&quot;</span><span class="s1">:</span>
+    <span class="s0">pass</span>
+</pre>
+</body>
+</html>
