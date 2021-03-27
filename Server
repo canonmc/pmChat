@@ -1,20 +1,58 @@
+from socket import *
+s_port = 12000
+s_sock = socket(AF_INET, SOCK_STREAM)
+s_sock.bind("",s_port)
+s_sock.listen(8)
 
-users = []
-#username :: IP address
-user_address = {}
+#socket :: username
+users = {}
 
-def send_connection_ack(user_address):
-    pass
+def validate_un(c_socket):
+    accept_un = False
+    while (not accept_un):
+        un = c_sock.recv(1024)
+        #sends client -1 if username unavailable; client needs to recompute username
+        if un in users.values():
+            c_sock.send(-1)
+        #username accepted, notify user of acceptance
+        else:
+            c_sock.send(1)
+            accept_un = True
+    send_user_list(c_socket)
+    send_new_user_report(c_socket)
+    users[c_socket] = un
+
 def route_message(origin_user,target_user,message):
-    pass
-def send_user_list(target_user,user_list):
+    for i in users.keys():
+        if users[i] == target_user:
+            i.send(origin_user)
+            i.send("\t"+message)
+
+def send_user_list(target_user):
     #send to new user
-    pass
-def send_new_user_report(new_user, user_list):
+    target_user.send("Welcome to the chat!\nHere are the users you can message:")
+    for i in users.values():
+        target_user.send("\t"+i)
+
+def send_new_user_report(new_user):
     #send to all users, EXCEPT new user
-    pass
+    for i in users.keys():
+        i.send(users[new_user])
+
 def remove_user(user_address):
     pass
 
 if __name__ == "__main__":
-    pass
+    while 1:
+        #connection request
+        c_sock, address = s_sock.accept()
+        validate_un(c_sock)
+
+        for i in users.keys():
+            #message will contain target username, followed by message
+            msg = i.recv(1024)
+            if msg:
+                hashtag = msg.index("#")
+                target = msg[:hashtag+5]
+                msg = msg[hashtag+4:]
+                route_message(users[i],target,msg)
