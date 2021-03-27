@@ -1,58 +1,65 @@
 from socket import *
+import threading
 s_port = 12000
 s_sock = socket(AF_INET, SOCK_STREAM)
-s_sock.bind("",s_port)
+s_sock.bind(("localhost",s_port))
 s_sock.listen(8)
-
+encoding = 'utf-8'
 #socket :: username
 users = {}
 
 def validate_un(c_socket):
     accept_un = False
     while (not accept_un):
-        un = c_sock.recv(1024)
+        un = c_sock.recv(1024).decode(encoding)
+        print(f"Username {un} received")
         #sends client -1 if username unavailable; client needs to recompute username
         if un in users.values():
-            c_sock.send(-1)
+            c_sock.send(bytes("-1",encoding))
         #username accepted, notify user of acceptance
         else:
-            c_sock.send(1)
+            c_sock.send(bytes("1",encoding))
             accept_un = True
     send_user_list(c_socket)
-    send_new_user_report(c_socket)
     users[c_socket] = un
+    send_new_user_report(c_socket)
 
 def route_message(origin_user,target_user,message):
+    print(f"routing message {message} to user {target_user} from {origin_user}")
     for i in users.keys():
         if users[i] == target_user:
-            i.send(origin_user)
-            i.send("\t"+message)
+            i.send(bytes(origin_user,encoding))
+            i.send(bytes("\t"+message,encoding))
 
 def send_user_list(target_user):
     #send to new user
-    target_user.send("Welcome to the chat!\nHere are the users you can message:")
+    target_user.send(bytes("Welcome to the chat! Here are the users you can message:\n",encoding))
     for i in users.values():
-        target_user.send("\t"+i)
+        target_user.send(bytes(i+"\n",encoding))
 
 def send_new_user_report(new_user):
     #send to all users, EXCEPT new user
     for i in users.keys():
-        i.send(users[new_user])
+        if i != new_user:
+            i.send(bytes(users[new_user],encoding))
 
 def remove_user(user_address):
     pass
 
+# handle each client with a thread
+def handle_client(client_socket):
+    # message will contain target username, followed by message
+    msg = client_socket.recv(1024).decode(encoding)
+    hashtag = msg.index("#")
+    target = msg[:hashtag + 5]
+    msg = msg[hashtag + 4:]
+    route_message(users[client_socket], target, msg)
+
+
 if __name__ == "__main__":
+    print("Server started")
     while 1:
         #connection request
         c_sock, address = s_sock.accept()
         validate_un(c_sock)
-
-        for i in users.keys():
-            #message will contain target username, followed by message
-            msg = i.recv(1024)
-            if msg:
-                hashtag = msg.index("#")
-                target = msg[:hashtag+5]
-                msg = msg[hashtag+4:]
-                route_message(users[i],target,msg)
+        threading.Thread(target = handle_client, args = (c_sock,)).start()
