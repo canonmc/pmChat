@@ -1,4 +1,5 @@
 import random
+import threading
 from socket import *
 username = ""
 users = []
@@ -10,6 +11,7 @@ encoding = 'utf-8'
 def generate_username(un):
     response = 0
     un += "#...."
+    #while loop randomized integer string of length 4, response from server indicates whether or not string (username + int string) is taken
     while response < 1:
         un = un[:-4]
         for _ in range(4):
@@ -20,16 +22,10 @@ def generate_username(un):
         print(f"Response: {response}")
     return un
 
-def send_message(user, message):
-    c_sock.send(bytes())
 def exit():
     pass
 
-if __name__ == "__main__":
-    username = generate_username(input("Please enter your name, or some username. Do not include numbers, as these will be randomly assigned for uniqueness\n"))
-    welcome = c_sock.recv(1024).decode(encoding)
-    print(welcome)
-    users = welcome.split(sep = "\n")[1:-1]
+def send_thread():
     while 1:
         msg = input()
         if msg == "users":
@@ -37,13 +33,17 @@ if __name__ == "__main__":
         elif msg == "exit":
             exit()
         else:
-            hashtag = msg.index("#")
-            if hashtag == -1:
-                print("Invalid message. type \"users\" to see available users, \"exit\" to exit, or a username (or simply their number) followed by the message you would like to send!")
-            else:
-                user = msg[:hashtag + 5]
-                msg = msg[hashtag + 4:]
-                if user in users:
-                    send_message(user,msg)
-                else:
-                    print("That is not a valid user. Either they left the chat, or they never existed!")
+            c_sock.send(bytes((msg),encoding))
+
+def recv_thread():
+    while 1:
+        print(c_sock.recv(1024).decode(encoding))
+
+if __name__ == "__main__":
+    username = generate_username(input("Please enter your name, or some username. Do not include numbers, as these will be randomly assigned for uniqueness\n"))
+    welcome = c_sock.recv(1024).decode(encoding)
+    print(welcome)
+    users = welcome.split(sep = "\n")[1:-1]
+
+    threading.Thread(target = send_thread).start()
+    threading.Thread(target=recv_thread).start()

@@ -3,7 +3,7 @@ import threading
 s_port = 12000
 s_sock = socket(AF_INET, SOCK_STREAM)
 s_sock.bind(("localhost",s_port))
-s_sock.listen(8)
+s_sock.listen(50)
 encoding = 'utf-8'
 #socket :: username
 users = {}
@@ -28,32 +28,40 @@ def route_message(origin_user,target_user,message):
     print(f"routing message {message} to user {target_user} from {origin_user}")
     for i in users.keys():
         if users[i] == target_user:
-            i.send(bytes(origin_user,encoding))
-            i.send(bytes("\t"+message,encoding))
-
-def send_user_list(target_user):
-    #send to new user
-    target_user.send(bytes("Welcome to the chat! Here are the users you can message:\n",encoding))
-    for i in users.values():
-        target_user.send(bytes(i+"\n",encoding))
+            i.send(bytes("<" + origin_user + ">" + " " + message,encoding))
 
 def send_new_user_report(new_user):
     #send to all users, EXCEPT new user
     for i in users.keys():
         if i != new_user:
-            i.send(bytes(users[new_user],encoding))
+            i.send(bytes("\t" + users[new_user] + " just joined\n",encoding))
 
+def send_user_list(target_user):
+    target_user.send(bytes("Welcome to the chat! Here are the users you can message:\n", encoding))
+    for i in users.values():
+        target_user.send(bytes("\t" + i + "\n", encoding))
 def remove_user(user_address):
     pass
 
-# handle each client with a thread
+def broadcast(sender,message):
+    for i in users.keys():
+        if i != sender:
+            i.send(bytes("From " + users[sender] + " to all: " + message + "\n",encoding))
+# handle each client with a thread?
 def handle_client(client_socket):
+
+    while 1:
+
     # message will contain target username, followed by message
-    msg = client_socket.recv(1024).decode(encoding)
-    hashtag = msg.index("#")
-    target = msg[:hashtag + 5]
-    msg = msg[hashtag + 4:]
-    route_message(users[client_socket], target, msg)
+        msg = client_socket.recv(1024).decode(encoding)
+        try:
+            hashtag = msg.index("#")
+            target = msg[:hashtag + 5]
+            msg = msg[hashtag + 5:].strip()
+            route_message(users[client_socket], target, msg)
+        except:
+            print("Message could not be directly delivered. Broadcast to all\n")
+            broadcast(client_socket,msg)
 
 
 if __name__ == "__main__":
