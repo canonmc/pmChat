@@ -1,5 +1,6 @@
 import random
 import threading
+from time import sleep
 from socket import *
 username = ""
 users = []
@@ -23,7 +24,7 @@ def generate_username(un):
     return un
 
 def exit():
-    pass
+    c_sock.close()
 
 def send_thread():
     while 1:
@@ -31,13 +32,21 @@ def send_thread():
         if msg == "users":
             print(users)
         elif msg == "exit":
+            c_sock.send(bytes(msg,encoding))
+            sleep(1)
             exit()
+            return
         else:
             c_sock.send(bytes((msg),encoding))
 
 def recv_thread():
     while 1:
-        print(c_sock.recv(1024).decode(encoding))
+        msg = c_sock.recv(1024).decode(encoding)
+        if msg == "exit":
+            return
+        if msg[0] == "\t":
+            users.append(msg[1:msg.index("#")+5].strip())
+        print(msg)
 
 if __name__ == "__main__":
     username = generate_username(input("Please enter your name, or some username. Do not include numbers, as these will be randomly assigned for uniqueness\n"))
