@@ -47,7 +47,7 @@ def remove_user(user_address):
     user = users[user_address]
     users.pop(user_address)
     for i in users.keys():
-        i.send(bytes(user + " just left.",encoding))
+        i.send(bytes(".\t" + user + " just left.",encoding))
 
 def broadcast(sender,message):
     for i in users.keys():

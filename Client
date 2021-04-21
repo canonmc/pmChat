@@ -2,7 +2,6 @@ import random
 import threading
 from time import sleep
 from socket import *
-username = ""
 users = []
 c_sock = socket(AF_INET, SOCK_STREAM)
 s_name = "localhost"
@@ -46,6 +45,8 @@ def recv_thread():
             return
         if msg[0] == "\t":
             users.append(msg[1:msg.index("#")+5].strip())
+        elif msg[0:2] == ".\t":
+            users.remove(msg[2:msg.index("#") + 5])
         print(msg)
 
 if __name__ == "__main__":
