@@ -2,7 +2,12 @@ from socket import *
 import threading
 s_port = 12000
 s_sock = socket(AF_INET, SOCK_STREAM)
-s_sock.bind(("",s_port))
+
+ip = gethostbyname(gethostname())
+file = open("serverName.txt","w")
+file.write(ip)
+file.close()
+s_sock.bind((ip,s_port))
 s_sock.listen(50)
 encoding = 'utf-8'
 #socket :: username
