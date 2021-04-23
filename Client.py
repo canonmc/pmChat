@@ -4,12 +4,8 @@ from time import sleep
 from socket import *
 users = []
 c_sock = socket(AF_INET, SOCK_STREAM)
-
-file = open("serverName.txt","r")
-ip = file.readline()
-file.close()
 s_port = 12000
-c_sock.connect((ip, s_port))
+c_sock.connect(("localhost", s_port))
 encoding = 'utf-8'
 def generate_username(un):
     response = 0
