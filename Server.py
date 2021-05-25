@@ -3,7 +3,7 @@ import threading
 s_port = 12000
 s_sock = socket(AF_INET, SOCK_STREAM)
 s_sock.bind(("localhost",s_port))
-s_sock.listen(50)
+s_sock.listen(8)
 encoding = 'utf-8'
 #socket :: username
 users = {}
